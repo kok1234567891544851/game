@@ -34,19 +34,14 @@ jobs:
           export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools" "platforms;android-34" "build-tools;34.0.0" "cmdline-tools;latest"
 
-      - name: Install Gradle
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y gradle
-
-      - name: Build debug APK (using system Gradle)
+      - name: Run Gradle assembleDebug via Gradle Action
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assembleDebug
         env:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
           ANDROID_HOME: ${{ github.workspace }}/android-sdk
           PATH: ${{ github.workspace }}/android-sdk/platform-tools:${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ env.PATH }}
-        run: |
-          # use system gradle (installed earlier via apt)
-          gradle -Porg.gradle.jvmargs="-Xmx1536m" assembleDebug --no-daemon
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
