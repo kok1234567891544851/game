@@ -40,15 +40,24 @@ jobs:
           # Install unzip and tar which are required by the Gradle action to unpack distributions
           sudo apt-get install -y unzip tar zip
 
-      - name: Run Gradle assembleDebug via Gradle Action
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: '8.0.2'
-          arguments: assembleDebug
+      - name: Download Gradle and run assembleDebug (direct)
         env:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
           ANDROID_HOME: ${{ github.workspace }}/android-sdk
-          PATH: ${{ github.workspace }}/android-sdk/platform-tools:${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ env.PATH }}
+          GRADLE_VERSION: 8.0.2
+        run: |
+          set -euo pipefail
+          echo "Downloading Gradle $GRADLE_VERSION"
+          mkdir -p $HOME/gradle
+          wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -O /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d $HOME/gradle
+          export GRADLE_HOME=$HOME/gradle/gradle-${GRADLE_VERSION}
+          echo "Gradle home: $GRADLE_HOME"
+          ls -la $GRADLE_HOME/bin
+          echo "JAVA_HOME=$JAVA_HOME"
+          # Run gradle from the unpacked distribution
+          $GRADLE_HOME/bin/gradle -v
+          $GRADLE_HOME/bin/gradle -Porg.gradle.jvmargs="-Xmx1536m" assembleDebug --no-daemon
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
