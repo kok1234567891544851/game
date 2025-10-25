@@ -1,0 +1,18 @@
+# Gradle
+.gradle/
+build/
+**/build/
+local.properties
+
+# Android Studio
+.idea/
+*.iml
+
+# Kotlin
+*.kotlin_module
+
+# macOS
+.DS_Store
+
+# Gradle wrapper
+gradle/wrapper/gradle-wrapper.jar
