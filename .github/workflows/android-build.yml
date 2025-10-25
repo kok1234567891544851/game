@@ -37,6 +37,7 @@ jobs:
       - name: Run Gradle assembleDebug via Gradle Action
         uses: gradle/gradle-build-action@v2
         with:
+          gradle-version: '8.0.2'
           arguments: assembleDebug
         env:
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
